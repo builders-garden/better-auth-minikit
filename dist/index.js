@@ -38,30 +38,9 @@ export const minikit = (options) => ({
     schema: mergeSchema(schema, options === null || options === void 0 ? void 0 : options.schema),
     endpoints: {
         getNonce: createAuthEndpoint("/minikit/nonce", {
-            method: "POST",
-            body: z.object({
-                walletAddress: z
-                    .string()
-                    .regex(/^0[xX][a-fA-F0-9]{40}$/i)
-                    .length(42),
-                chainId: z
-                    .number()
-                    .int()
-                    .positive()
-                    .max(2147483647)
-                    .optional()
-                    .default(1), // Default to Ethereum mainnet
-            }),
+            method: "GET",
         }, (ctx) => __awaiter(void 0, void 0, void 0, function* () {
-            const { walletAddress: rawWalletAddress, chainId } = ctx.body;
-            const walletAddress = getAddress(rawWalletAddress);
             const nonce = yield options.getNonce();
-            // Store nonce with wallet address and chain ID context
-            yield ctx.context.internalAdapter.createVerificationValue({
-                identifier: `minikit:${walletAddress}:${chainId}`,
-                value: nonce,
-                expiresAt: new Date(Date.now() + 15 * 60 * 1000),
-            });
             return ctx.json({ nonce });
         })),
         signInWithMinikit: createAuthEndpoint("/minikit/signin", {
@@ -70,6 +49,7 @@ export const minikit = (options) => ({
                 .object({
                 message: z.string().min(1),
                 signature: z.string().min(1),
+                nonce: z.string().min(1),
                 walletAddress: z
                     .string()
                     .regex(/^0[xX][a-fA-F0-9]{40}$/i)
@@ -94,7 +74,7 @@ export const minikit = (options) => ({
             requireRequest: true,
         }, (ctx) => __awaiter(void 0, void 0, void 0, function* () {
             var _a, _b, _c, _d, _e, _f, _g, _h;
-            const { message, signature, walletAddress: rawWalletAddress, chainId, email, user: userFromClient, } = ctx.body;
+            const { message, signature, nonce, walletAddress: rawWalletAddress, chainId, email, user: userFromClient, } = ctx.body;
             const walletAddress = getAddress(rawWalletAddress);
             const isAnon = (_a = options.anonymous) !== null && _a !== void 0 ? _a : true;
             if (!isAnon && !email) {
@@ -104,18 +84,7 @@ export const minikit = (options) => ({
                 });
             }
             try {
-                // Find stored nonce with wallet address and chain ID context
-                const verification = yield ctx.context.internalAdapter.findVerificationValue(`minikit:${walletAddress}:${chainId}`);
-                // Ensure nonce is valid and not expired
-                if (!verification || new Date() > verification.expiresAt) {
-                    throw new APIError("UNAUTHORIZED", {
-                        message: "Unauthorized: Invalid or expired nonce",
-                        status: 401,
-                        code: "UNAUTHORIZED_INVALID_OR_EXPIRED_NONCE",
-                    });
-                }
                 // Verify SIWE message with enhanced parameters
-                const { value: nonce } = verification;
                 const verified = yield options.verifyMessage({
                     message,
                     signature,
@@ -139,8 +108,6 @@ export const minikit = (options) => ({
                         status: 401,
                     });
                 }
-                // Clean up used nonce
-                yield ctx.context.internalAdapter.deleteVerificationValue(verification.id);
                 // Look for existing user by their wallet addresses
                 let user = null;
                 // Check if there's a wallet address record for this exact address+chainId combination

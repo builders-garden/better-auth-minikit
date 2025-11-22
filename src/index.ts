@@ -35,32 +35,10 @@ export const minikit = (options: MinikitPluginOptions) =>
 			getNonce: createAuthEndpoint(
 				"/minikit/nonce",
 				{
-					method: "POST",
-					body: z.object({
-						walletAddress: z
-							.string()
-							.regex(/^0[xX][a-fA-F0-9]{40}$/i)
-							.length(42),
-						chainId: z
-							.number()
-							.int()
-							.positive()
-							.max(2147483647)
-							.optional()
-							.default(1), // Default to Ethereum mainnet
-					}),
+					method: "GET",
 				},
 				async (ctx) => {
-					const { walletAddress: rawWalletAddress, chainId } = ctx.body;
-					const walletAddress = getAddress(rawWalletAddress);
 					const nonce = await options.getNonce();
-
-					// Store nonce with wallet address and chain ID context
-					await ctx.context.internalAdapter.createVerificationValue({
-						identifier: `minikit:${walletAddress}:${chainId}`,
-						value: nonce,
-						expiresAt: new Date(Date.now() + 15 * 60 * 1000),
-					});
 
 					return ctx.json({ nonce });
 				},
@@ -73,6 +51,7 @@ export const minikit = (options: MinikitPluginOptions) =>
 						.object({
 							message: z.string().min(1),
 							signature: z.string().min(1),
+							nonce: z.string().min(1),
 							walletAddress: z
 								.string()
 								.regex(/^0[xX][a-fA-F0-9]{40}$/i)
@@ -101,6 +80,7 @@ export const minikit = (options: MinikitPluginOptions) =>
 					const {
 						message,
 						signature,
+						nonce,
 						walletAddress: rawWalletAddress,
 						chainId,
 						email,
@@ -117,23 +97,7 @@ export const minikit = (options: MinikitPluginOptions) =>
 					}
 
 					try {
-						// Find stored nonce with wallet address and chain ID context
-						const verification =
-							await ctx.context.internalAdapter.findVerificationValue(
-								`minikit:${walletAddress}:${chainId}`,
-							);
-
-						// Ensure nonce is valid and not expired
-						if (!verification || new Date() > verification.expiresAt) {
-							throw new APIError("UNAUTHORIZED", {
-								message: "Unauthorized: Invalid or expired nonce",
-								status: 401,
-								code: "UNAUTHORIZED_INVALID_OR_EXPIRED_NONCE",
-							});
-						}
-
 						// Verify SIWE message with enhanced parameters
-						const { value: nonce } = verification;
 						const verified = await options.verifyMessage({
 							message,
 							signature,
@@ -158,11 +122,6 @@ export const minikit = (options: MinikitPluginOptions) =>
 								status: 401,
 							});
 						}
-
-						// Clean up used nonce
-						await ctx.context.internalAdapter.deleteVerificationValue(
-							verification.id,
-						);
 
 						// Look for existing user by their wallet addresses
 						let user: User | null = null;

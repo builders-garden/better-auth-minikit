@@ -1,6 +1,6 @@
 import type { BetterFetchResponse } from "@better-fetch/fetch";
 import type { minikit } from "./index.js";
-import type { MinikitGetNonce, MinikitGetNonceResponse, MinikitSignInAuthData, MinikitSignInResponse } from "./types.js";
+import type { MinikitGetNonceResponse, MinikitSignInAuthData, MinikitSignInResponse } from "./types.js";
 type MinikitPlugin = typeof minikit;
 /**
  * Client plugin for SIWE using Worldcoin Minikit
@@ -15,7 +15,7 @@ export declare const minikitClient: () => {
          * @returns BetterFetchResponse<string>
          * @throws APIError if the nonce fails
          */
-        getNonce: (authData: MinikitGetNonce) => Promise<BetterFetchResponse<MinikitGetNonceResponse>>;
+        getNonce: () => Promise<BetterFetchResponse<MinikitGetNonceResponse>>;
         /**
          * Sign in with Worldcoin Minikit
          * @param authData - Authenticated data from the Worldcoin Minikit MiniApp SDK

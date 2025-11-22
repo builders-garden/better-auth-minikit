@@ -2,7 +2,6 @@ import type { BetterFetchResponse } from "@better-fetch/fetch";
 import type { BetterAuthClientPlugin } from "better-auth";
 import type { minikit } from "./index.js";
 import type {
-	MinikitGetNonce,
 	MinikitGetNonceResponse,
 	MinikitSignInAuthData,
 	MinikitSignInResponse,
@@ -24,12 +23,11 @@ export const minikitClient = () => {
 			 * @returns BetterFetchResponse<string>
 			 * @throws APIError if the nonce fails
 			 */
-			getNonce: async (
-				authData: MinikitGetNonce,
-			): Promise<BetterFetchResponse<MinikitGetNonceResponse>> => {
+			getNonce: async (): Promise<
+				BetterFetchResponse<MinikitGetNonceResponse>
+			> => {
 				return await $fetch<MinikitGetNonceResponse>("/minikit/nonce", {
-					method: "POST",
-					body: authData,
+					method: "GET",
 				});
 			},
 			/**

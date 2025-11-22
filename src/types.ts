@@ -23,10 +23,6 @@ export interface MinikitPluginOptions {
 /**
  * Minikit Get Nonce Arguments
  */
-export interface MinikitGetNonce {
-	walletAddress: string;
-	chainId: number;
-}
 export interface MinikitGetNonceResponse {
 	nonce: string;
 }
@@ -44,6 +40,7 @@ export interface SIWEVerifyMessageArgs {
 export interface MinikitSignInAuthData {
 	message: string;
 	signature: string;
+	nonce: string;
 	walletAddress: string;
 	chainId: number;
 	user: {
@@ -74,7 +71,7 @@ export interface ENSLookupResult {
  */
 export type MinikitClientType = {
 	minikit: {
-		getNonce: (args: MinikitGetNonce) => Promise<MinikitGetNonceResponse>;
+		getNonce: () => Promise<MinikitGetNonceResponse>;
 		signInWithMinikit: (
 			args: MinikitSignInAuthData,
 		) => Promise<MinikitSignInResponse>;

@@ -74,13 +74,10 @@ export declare const minikit: (options: MinikitPluginOptions) => {
     };
     endpoints: {
         getNonce: {
-            <AsResponse extends boolean = false, ReturnHeaders extends boolean = false>(inputCtx_0: {
-                body: {
-                    walletAddress: string;
-                    chainId?: number | undefined;
-                };
+            <AsResponse extends boolean = false, ReturnHeaders extends boolean = false>(inputCtx_0?: ({
+                body?: undefined;
             } & {
-                method?: "POST" | undefined;
+                method?: "GET" | undefined;
             } & {
                 query?: Record<string, any> | undefined;
             } & {
@@ -97,7 +94,7 @@ export declare const minikit: (options: MinikitPluginOptions) => {
             } & {
                 asResponse?: AsResponse | undefined;
                 returnHeaders?: ReturnHeaders | undefined;
-            }): Promise<[AsResponse] extends [true] ? Response : [ReturnHeaders] extends [true] ? {
+            }) | undefined): Promise<[AsResponse] extends [true] ? Response : [ReturnHeaders] extends [true] ? {
                 headers: Headers;
                 response: {
                     nonce: string;
@@ -106,11 +103,7 @@ export declare const minikit: (options: MinikitPluginOptions) => {
                 nonce: string;
             }>;
             options: {
-                method: "POST";
-                body: z.ZodObject<{
-                    walletAddress: z.ZodString;
-                    chainId: z.ZodDefault<z.ZodOptional<z.ZodNumber>>;
-                }, z.core.$strip>;
+                method: "GET";
             } & {
                 use: any[];
             };
@@ -121,6 +114,7 @@ export declare const minikit: (options: MinikitPluginOptions) => {
                 body: {
                     message: string;
                     signature: string;
+                    nonce: string;
                     walletAddress: string;
                     user: {
                         username?: string | undefined;
@@ -180,6 +174,7 @@ export declare const minikit: (options: MinikitPluginOptions) => {
                 body: z.ZodObject<{
                     message: z.ZodString;
                     signature: z.ZodString;
+                    nonce: z.ZodString;
                     walletAddress: z.ZodString;
                     chainId: z.ZodDefault<z.ZodOptional<z.ZodNumber>>;
                     email: z.ZodOptional<z.ZodEmail>;
