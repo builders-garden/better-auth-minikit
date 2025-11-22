@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Better Auth &ndash; Worldcoin Minikit &lpar;SIWE&rpar;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="better-auth--worldcoin-minikit-siwe">Better Auth – Worldcoin Minikit (SIWE)</h1>
+<p>Authenticate users via Worldcoin Minikit using Better Auth. This plugin provides a Sign-In With Ethereum (SIWE) flow adapted for Worldcoin Minikit applications.</p>
+<h2 id="features">Features</h2>
+<ul>
+<li><strong>SIWE Flow</strong>: Full Sign-In With Ethereum implementation adapted for Minikit.</li>
+<li><strong>Multi-chain Support</strong>: Associates wallet addresses with specific Chain IDs.</li>
+<li><strong>Account Linking</strong>: Automatically links multiple wallet addresses to the same user if verified.</li>
+<li><strong>MiniApp Compatible</strong>: Sets secure, partitioned session cookies (<code>SameSite: &quot;none&quot;</code>).</li>
+</ul>
+<h2 id="installation">Installation</h2>
+<pre><code class="language-bash">npm i better-auth-minikit
+</code></pre>
+<h2 id="server-setup">Server Setup</h2>
+<p>Add the <code>minikit</code> plugin to your Better Auth configuration. You need to provide implementations for nonce generation and message verification.</p>
+<pre><code class="language-ts"><span class="hljs-keyword">import</span> { betterAuth } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;better-auth&quot;</span>;
+<span class="hljs-keyword">import</span> { minikit } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;better-auth-minikit&quot;</span>;
+<span class="hljs-keyword">import</span> { generateRandomString } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;better-auth/crypto&quot;</span>;
+<span class="hljs-keyword">import</span> { parseSiweMessage, validateSiweMessage } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;viem/siwe&quot;</span>; <span class="hljs-comment">// Example using viem</span>
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> auth = <span class="hljs-title function_">betterAuth</span>({
+  <span class="hljs-attr">plugins</span>: [
+    <span class="hljs-title function_">minikit</span>({
+      <span class="hljs-comment">// 1. Domain expected in the SIWE message</span>
+      <span class="hljs-attr">domain</span>: <span class="hljs-string">&quot;app.example.com&quot;</span>,
+
+      <span class="hljs-comment">// 2. Nonce generation function</span>
+      <span class="hljs-attr">getNonce</span>: <span class="hljs-keyword">async</span> () =&gt; {
+        <span class="hljs-keyword">return</span> <span class="hljs-title function_">generateRandomString</span>(<span class="hljs-number">32</span>);
+      },
+
+      <span class="hljs-comment">// 3. Message verification function</span>
+      <span class="hljs-attr">verifyMessage</span>: <span class="hljs-keyword">async</span> ({ message, signature, address, chainId }) =&gt; {
+        <span class="hljs-keyword">try</span> {
+            <span class="hljs-keyword">const</span> valid = <span class="hljs-keyword">await</span> <span class="hljs-title function_">validateSiweMessage</span>({
+                message,
+                signature,
+                <span class="hljs-attr">domain</span>: <span class="hljs-string">&quot;app.example.com&quot;</span>,
+                <span class="hljs-attr">nonce</span>: (<span class="hljs-keyword">await</span> <span class="hljs-title function_">parseSiweMessage</span>(message)).<span class="hljs-property">nonce</span>,
+            });
+            <span class="hljs-keyword">return</span> valid;
+        } <span class="hljs-keyword">catch</span> (e) {
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+        }
+      },
+
+      <span class="hljs-comment">// (Optional) Custom email domain for generated user emails</span>
+      <span class="hljs-comment">// emailDomainName: &quot;minikit-user.com&quot;,</span>
+      
+      <span class="hljs-comment">// (Optional) Allow anonymous users (default: true)</span>
+      <span class="hljs-comment">// anonymous: true,</span>
+    })
+  ]
+});
+</code></pre>
+<h2 id="client-setup">Client Setup</h2>
+<p>Add the client plugin to your Better Auth client instance.</p>
+<pre><code class="language-ts"><span class="hljs-keyword">import</span> { createAuthClient } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;better-auth/react&quot;</span>;
+<span class="hljs-keyword">import</span> { minikitClient } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;better-auth-minikit/client&quot;</span>;
+
+<span class="hljs-keyword">const</span> client = <span class="hljs-title function_">createAuthClient</span>({
+  <span class="hljs-attr">plugins</span>: [<span class="hljs-title function_">minikitClient</span>()],
+  <span class="hljs-attr">fetchOptions</span>: {
+    <span class="hljs-attr">credentials</span>: <span class="hljs-string">&quot;include&quot;</span>, <span class="hljs-comment">// Required for session cookies in MiniApps</span>
+  },
+});
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> authClient = client;
+</code></pre>
+<h2 id="usage">Usage</h2>
+<p>The authentication flow consists of three steps: getting a nonce, signing the message, and verifying the signature.</p>
+<h3 id="1-get-nonce">1. Get Nonce</h3>
+<p>Request a nonce from the server for the user's wallet address.</p>
+<pre><code class="language-ts"><span class="hljs-keyword">const</span> walletAddress = <span class="hljs-string">&quot;0x...&quot;</span>; <span class="hljs-comment">// User&#x27;s wallet address</span>
+<span class="hljs-keyword">const</span> chainId = <span class="hljs-number">1</span>; <span class="hljs-comment">// Current chain ID</span>
+
+<span class="hljs-keyword">const</span> { data, error } = <span class="hljs-keyword">await</span> authClient.<span class="hljs-property">minikit</span>.<span class="hljs-title function_">getNonce</span>({
+  walletAddress,
+  chainId
+});
+
+<span class="hljs-keyword">const</span> nonce = data.<span class="hljs-property">nonce</span>;
+</code></pre>
+<h3 id="2-sign-message-client-side">2. Sign Message (Client Side)</h3>
+<p>Use the Worldcoin Minikit SDK (or any wallet provider) to sign the SIWE message.</p>
+<pre><code class="language-ts"><span class="hljs-keyword">import</span> { <span class="hljs-title class_">MiniKit</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@worldcoin/minikit-js&#x27;</span>;
+
+<span class="hljs-comment">// Construct SIWE message (example)</span>
+<span class="hljs-keyword">const</span> message = <span class="hljs-title function_">createSiweMessage</span>({
+    <span class="hljs-attr">domain</span>: <span class="hljs-variable language_">window</span>.<span class="hljs-property">location</span>.<span class="hljs-property">host</span>,
+    <span class="hljs-attr">address</span>: walletAddress,
+    <span class="hljs-attr">statement</span>: <span class="hljs-string">&quot;Sign in to My App&quot;</span>,
+    <span class="hljs-attr">uri</span>: <span class="hljs-variable language_">window</span>.<span class="hljs-property">location</span>.<span class="hljs-property">origin</span>,
+    <span class="hljs-attr">version</span>: <span class="hljs-string">&quot;1&quot;</span>,
+    <span class="hljs-attr">chainId</span>: chainId,
+    <span class="hljs-attr">nonce</span>: nonce,
+});
+
+<span class="hljs-comment">// Request signature from Minikit</span>
+<span class="hljs-keyword">const</span> { <span class="hljs-attr">commandPayload</span>: signature } = <span class="hljs-keyword">await</span> <span class="hljs-title class_">MiniKit</span>.<span class="hljs-property">commands</span>.<span class="hljs-title function_">signMessage</span>({
+    <span class="hljs-attr">message</span>: message
+});
+</code></pre>
+<h3 id="3-verify-and-sign-in">3. Verify and Sign In</h3>
+<p>Send the signature and message to the server to complete the sign-in.</p>
+<pre><code class="language-ts"><span class="hljs-keyword">const</span> { data, error } = <span class="hljs-keyword">await</span> authClient.<span class="hljs-property">minikit</span>.<span class="hljs-title function_">signInWithMinikit</span>({
+  message,
+  signature,
+  walletAddress,
+  chainId,
+  <span class="hljs-attr">user</span>: {
+      <span class="hljs-attr">username</span>: <span class="hljs-string">&quot;user-handle&quot;</span>, <span class="hljs-comment">// Optional</span>
+      <span class="hljs-attr">profilePictureUrl</span>: <span class="hljs-string">&quot;https://...&quot;</span> <span class="hljs-comment">// Optional</span>
+  }
+});
+
+<span class="hljs-keyword">if</span> (data?.<span class="hljs-property">success</span>) {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Signed in user:&quot;</span>, data.<span class="hljs-property">user</span>);
+}
+</code></pre>
+<h2 id="database-schema">Database Schema</h2>
+<p>This plugin adds a <code>walletAddress</code> table and extends the <code>user</code> and <code>account</code> tables.</p>
+<h3 id="walletaddress"><code>walletAddress</code></h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>string</td>
+<td>Primary Key</td>
+</tr>
+<tr>
+<td>userId</td>
+<td>string</td>
+<td>Foreign Key to User</td>
+</tr>
+<tr>
+<td>address</td>
+<td>string</td>
+<td>Wallet Address</td>
+</tr>
+<tr>
+<td>chainId</td>
+<td>number</td>
+<td>Chain ID</td>
+</tr>
+<tr>
+<td>isPrimary</td>
+<td>boolean</td>
+<td>Whether this is the primary wallet</td>
+</tr>
+<tr>
+<td>createdAt</td>
+<td>date</td>
+<td>Creation timestamp</td>
+</tr>
+</tbody>
+</table>
+<h3 id="user--account-extensions">User &amp; Account Extensions</h3>
+<ul>
+<li><strong>User</strong>: Adds <code>minikitAddress</code> (string, unique)</li>
+<li><strong>Account</strong>: Adds <code>minikitAddress</code> (string, unique)</li>
+</ul>
+<h2 id="migration">Migration</h2>
+<p>Run the migration command to update your database schema:</p>
+<pre><code class="language-bash">npx @better-auth/cli migrate
+</code></pre>
+
+            
+            
+        </body>
+        </html>

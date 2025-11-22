@@ -1,0 +1,55 @@
+{
+	"name": "better-auth-minikit",
+	"version": "1.0.0",
+	"description": "better-auth plugin for Worldcoin Minikit (SIWE)",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"import": {
+				"types": "./dist/index.d.ts",
+				"default": "./dist/index.js"
+			}
+		},
+		"./client": {
+			"types": "./dist/client.d.ts",
+			"import": "./dist/client.js",
+			"require": "./dist/client.cjs"
+		}
+	},
+	"files": [
+		"dist"
+	],
+	"type": "module",
+	"scripts": {
+		"build": "tsc && chmod +x ./dist/index.js"
+	},
+	"keywords": [
+		"better-auth",
+		"worldcoin",
+		"minikit",
+		"plugin"
+	],
+	"author": "buildersgarden",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/builders-garden/better-auth-minikit.git"
+	},
+	"bugs": {
+		"url": "https://github.com/builders-garden/better-auth-minikit/issues"
+	},
+	"homepage": "https://github.com/builders-garden/better-auth-minikit#readme",
+	"peerDependencies": {
+		"better-auth": "^1.0.0"
+	},
+	"dependencies": {
+		"better-auth": "^1.0.0",
+		"viem": "^2.39.3",
+		"zod": "^4.1.12"
+	},
+	"devDependencies": {
+		"@types/node": "^24.7.2",
+		"typescript": "^5"
+	}
+}
