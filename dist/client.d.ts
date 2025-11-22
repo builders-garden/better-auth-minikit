@@ -25,5 +25,5 @@ export declare const minikitClient: () => {
         signInWithMinikit: (authData: MinikitSignInAuthData) => Promise<BetterFetchResponse<MinikitSignInResponse>>;
     };
 };
-export {};
+export default minikitClient;
 //# sourceMappingURL=client.d.ts.map

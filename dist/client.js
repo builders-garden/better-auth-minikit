@@ -42,4 +42,5 @@ export const minikitClient = () => {
         }),
     };
 };
+export default minikitClient;
 //# sourceMappingURL=client.js.map

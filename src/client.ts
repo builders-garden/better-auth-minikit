@@ -49,3 +49,5 @@ export const minikitClient = () => {
 		}),
 	} satisfies BetterAuthClientPlugin;
 };
+
+export default minikitClient;

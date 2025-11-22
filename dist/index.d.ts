@@ -1,5 +1,24 @@
 import * as z from "zod";
 import type { MinikitPluginOptions } from "./types.js";
+/**
+ * Worldcoin Minikit authentication plugin for Better Auth.
+ *
+ * @example
+ * ```ts
+ * import { minikit } from "better-auth-minikit";
+ *
+ * const auth = betterAuth({
+ *  plugins: [
+ *    minikit({
+ *      domain: "example.com",
+ *      getNonce: async () => await generateRandomString(32),
+ *      verifyMessage: async ({ message, signature, address, chainId }) =>
+ *        await verifySIWEMessage(message, signature, address),
+ *      ensLookup: async ({ walletAddress }) => await ensLookup(walletAddress),
+ *    })],
+ * });
+ * ```
+ */
 export declare const minikit: (options: MinikitPluginOptions) => {
     id: "minikit";
     schema: {

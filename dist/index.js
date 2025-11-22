@@ -14,6 +14,25 @@ import { mergeSchema } from "better-auth/db";
 import { getAddress } from "viem";
 import * as z from "zod";
 import { schema } from "./schema.js";
+/**
+ * Worldcoin Minikit authentication plugin for Better Auth.
+ *
+ * @example
+ * ```ts
+ * import { minikit } from "better-auth-minikit";
+ *
+ * const auth = betterAuth({
+ *  plugins: [
+ *    minikit({
+ *      domain: "example.com",
+ *      getNonce: async () => await generateRandomString(32),
+ *      verifyMessage: async ({ message, signature, address, chainId }) =>
+ *        await verifySIWEMessage(message, signature, address),
+ *      ensLookup: async ({ walletAddress }) => await ensLookup(walletAddress),
+ *    })],
+ * });
+ * ```
+ */
 export const minikit = (options) => ({
     id: "minikit",
     schema: mergeSchema(schema, options === null || options === void 0 ? void 0 : options.schema),
