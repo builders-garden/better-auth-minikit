@@ -73,122 +73,43 @@ export declare const minikit: (options: MinikitPluginOptions) => {
         };
     };
     endpoints: {
-        getNonce: {
-            <AsResponse extends boolean = false, ReturnHeaders extends boolean = false>(inputCtx_0?: ({
-                body?: undefined;
-            } & {
-                method?: "GET" | undefined;
-            } & {
-                query?: Record<string, any> | undefined;
-            } & {
-                params?: Record<string, any>;
-            } & {
-                request?: Request;
-            } & {
-                headers?: HeadersInit;
-            } & {
-                asResponse?: boolean;
-                returnHeaders?: boolean;
-                use?: import("better-auth").Middleware[];
-                path?: string;
-            } & {
-                asResponse?: AsResponse | undefined;
-                returnHeaders?: ReturnHeaders | undefined;
-            }) | undefined): Promise<[AsResponse] extends [true] ? Response : [ReturnHeaders] extends [true] ? {
-                headers: Headers;
-                response: {
-                    nonce: string;
-                };
-            } : {
-                nonce: string;
-            }>;
-            options: {
-                method: "GET";
-            } & {
-                use: any[];
-            };
-            path: "/minikit/nonce";
-        };
-        signInWithMinikit: {
-            <AsResponse extends boolean = false, ReturnHeaders extends boolean = false>(inputCtx_0: {
-                body: {
-                    message: string;
-                    signature: string;
-                    nonce: string;
-                    walletAddress: string;
-                    user: {
-                        username?: string | undefined;
-                        profilePictureUrl?: string | undefined;
-                    };
-                    chainId?: number | undefined;
-                    email?: string | undefined;
-                };
-            } & {
-                method?: "POST" | undefined;
-            } & {
-                query?: Record<string, any> | undefined;
-            } & {
-                params?: Record<string, any>;
-            } & {
-                request: Request;
-            } & {
-                headers?: HeadersInit;
-            } & {
-                asResponse?: boolean;
-                returnHeaders?: boolean;
-                use?: import("better-auth").Middleware[];
-                path?: string;
-            } & {
-                asResponse?: AsResponse | undefined;
-                returnHeaders?: ReturnHeaders | undefined;
-            }): Promise<[AsResponse] extends [true] ? Response : [ReturnHeaders] extends [true] ? {
-                headers: Headers;
-                response: {
-                    token: string;
-                    success: boolean;
-                    user: {
-                        id: string;
-                        createdAt: Date;
-                        updatedAt: Date;
-                        email: string;
-                        emailVerified: boolean;
-                        name: string;
-                        image?: string | null | undefined;
-                    };
-                };
-            } : {
-                token: string;
-                success: boolean;
-                user: {
-                    id: string;
-                    createdAt: Date;
-                    updatedAt: Date;
-                    email: string;
-                    emailVerified: boolean;
-                    name: string;
-                    image?: string | null | undefined;
-                };
-            }>;
-            options: {
-                method: "POST";
-                body: z.ZodObject<{
-                    message: z.ZodString;
-                    signature: z.ZodString;
-                    nonce: z.ZodString;
-                    walletAddress: z.ZodString;
-                    chainId: z.ZodDefault<z.ZodOptional<z.ZodNumber>>;
-                    email: z.ZodOptional<z.ZodEmail>;
-                    user: z.ZodObject<{
-                        username: z.ZodOptional<z.ZodString>;
-                        profilePictureUrl: z.ZodOptional<z.ZodString>;
-                    }, z.core.$strip>;
+        getNonce: import("better-auth").StrictEndpoint<"/minikit/nonce", {
+            method: "GET";
+        } & {
+            use: any[];
+        }, {
+            nonce: string;
+        }>;
+        signInWithMinikit: import("better-auth").StrictEndpoint<"/minikit/signin", {
+            method: "POST";
+            body: z.ZodObject<{
+                message: z.ZodString;
+                signature: z.ZodString;
+                nonce: z.ZodString;
+                walletAddress: z.ZodString;
+                chainId: z.ZodDefault<z.ZodOptional<z.ZodNumber>>;
+                email: z.ZodOptional<z.ZodEmail>;
+                user: z.ZodObject<{
+                    username: z.ZodOptional<z.ZodString>;
+                    profilePictureUrl: z.ZodOptional<z.ZodString>;
                 }, z.core.$strip>;
-                requireRequest: true;
-            } & {
-                use: any[];
+            }, z.core.$strip>;
+            requireRequest: true;
+        } & {
+            use: any[];
+        }, {
+            token: string;
+            success: boolean;
+            user: {
+                id: string;
+                createdAt: Date;
+                updatedAt: Date;
+                email: string;
+                emailVerified: boolean;
+                name: string;
+                image?: string | null | undefined;
             };
-            path: "/minikit/signin";
-        };
+        }>;
     };
 };
 //# sourceMappingURL=index.d.ts.map

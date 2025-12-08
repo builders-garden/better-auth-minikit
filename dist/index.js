@@ -220,7 +220,7 @@ export const minikit = (options) => ({
                     }
                 }
                 // Create session cookie and set it in the response
-                const session = yield ctx.context.internalAdapter.createSession(user.id, ctx);
+                const session = yield ctx.context.internalAdapter.createSession(user.id);
                 if (!session) {
                     throw new APIError("INTERNAL_SERVER_ERROR", {
                         status: 500,

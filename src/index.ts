@@ -249,7 +249,6 @@ export const minikit = (options: MinikitPluginOptions) =>
 						// Create session cookie and set it in the response
 						const session = await ctx.context.internalAdapter.createSession(
 							user.id,
-							ctx,
 						);
 
 						if (!session) {
