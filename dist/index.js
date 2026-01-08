@@ -108,6 +108,8 @@ export const minikit = (options) => ({
                         status: 401,
                     });
                 }
+                // check if user is human verified by worldcoin
+                const isWorldcoinVerified = yield options.isUserVerified(walletAddress);
                 // Look for existing user by their wallet addresses
                 let user = null;
                 // Check if there's a wallet address record for this exact address+chainId combination
@@ -189,13 +191,23 @@ export const minikit = (options) => ({
                             model: "user",
                             where: [{ field: "id", value: user.id }],
                             update: {
-                                minikitAddress: walletAddress,
+                                worldcoinAddress: walletAddress,
+                                isWorldcoinVerified,
                                 updatedAt: new Date(),
                             },
                         }),
                     ]);
                 }
                 else {
+                    // update user isWorldcoinVerified if it has changed
+                    if (user.isWorldcoinVerified !==
+                        isWorldcoinVerified) {
+                        yield ctx.context.adapter.update({
+                            model: "user",
+                            where: [{ field: "id", value: user.id }],
+                            update: { isWorldcoinVerified },
+                        });
+                    }
                     // User exists, but check if this specific address/chain combo exists
                     if (!existingWalletAddress) {
                         // Add this new chainId to existing user's addresses

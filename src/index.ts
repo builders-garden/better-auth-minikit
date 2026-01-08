@@ -6,7 +6,11 @@ import { mergeSchema } from "better-auth/db";
 import { getAddress } from "viem";
 import * as z from "zod";
 import { schema } from "./schema.js";
-import type { MinikitPluginOptions, WalletAddress } from "./types.js";
+import type {
+	MinikitPluginOptions,
+	MinikitUser,
+	WalletAddress,
+} from "./types.js";
 
 /**
  * Worldcoin Minikit authentication plugin for Better Auth.
@@ -123,6 +127,10 @@ export const minikit = (options: MinikitPluginOptions) =>
 							});
 						}
 
+						// check if user is human verified by worldcoin
+						const isWorldcoinVerified =
+							await options.isUserVerified(walletAddress);
+
 						// Look for existing user by their wallet addresses
 						let user: User | null = null;
 
@@ -215,12 +223,25 @@ export const minikit = (options: MinikitPluginOptions) =>
 									model: "user",
 									where: [{ field: "id", value: user.id }],
 									update: {
-										minikitAddress: walletAddress,
+										worldcoinAddress: walletAddress,
+										isWorldcoinVerified,
 										updatedAt: new Date(),
 									},
 								}),
 							]);
 						} else {
+							// update user isWorldcoinVerified if it has changed
+							if (
+								(user as MinikitUser).isWorldcoinVerified !==
+								isWorldcoinVerified
+							) {
+								await ctx.context.adapter.update({
+									model: "user",
+									where: [{ field: "id", value: user.id }],
+									update: { isWorldcoinVerified },
+								});
+							}
+
 							// User exists, but check if this specific address/chain combo exists
 							if (!existingWalletAddress) {
 								// Add this new chainId to existing user's addresses

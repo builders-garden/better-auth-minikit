@@ -25,17 +25,22 @@ export declare const minikit: (options: MinikitPluginOptions) => {
         user: {
             modelName: string;
             fields: {
-                minikitAddress: {
+                worldcoinAddress: {
                     type: "string";
                     required: true;
                     unique: true;
+                };
+                isWorldcoinVerified: {
+                    type: "boolean";
+                    required: true;
+                    defaultValue: false;
                 };
             };
         };
         account: {
             modelName: string;
             fields: {
-                minikitAddress: {
+                worldcoinAddress: {
                     type: "string";
                     required: true;
                     unique: true;

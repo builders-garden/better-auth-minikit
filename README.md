@@ -161,8 +161,8 @@ This plugin adds a `walletAddress` table and extends the `user` and `account` ta
 
 ### User & Account Extensions
 
-- **User**: Adds `minikitAddress` (string, unique)
-- **Account**: Adds `minikitAddress` (string, unique)
+- **User**: Adds `worldcoinAddress` (string, unique)
+- **Account**: Adds `worldcoinAddress` (string, unique)
 
 ## Migration
 

@@ -12,6 +12,7 @@ export interface MinikitPluginOptions {
 	anonymous?: boolean | undefined;
 	getNonce: () => Promise<string>;
 	verifyMessage: (args: SIWEVerifyMessageArgs) => Promise<boolean>;
+	isUserVerified: (walletAddress: string, rpcUrl?: string) => Promise<boolean>;
 	ensLookup?: ((args: ENSLookupArgs) => Promise<ENSLookupResult>) | undefined;
 	/**
 	 * The schema to use for the Minikit plugin
@@ -82,7 +83,8 @@ export type MinikitClientType = {
  * Minikit Extra fields used in User and Account models
  */
 export type MinikitExtraFields = {
-	minikitAddress: string;
+	worldcoinAddress: string;
+	isWorldcoinVerified: boolean;
 };
 
 /**
@@ -95,13 +97,8 @@ export type MinikitUser = User & MinikitExtraFields;
  * Minikit Account Type, returned by the Minikit account model
  * @see {@link better-auth-minikit#schema | Minikit schema}
  */
-export type MinikitAccount = Account & MinikitExtraFields;
-
-/**
- * Minikit Wallet Address Type, returned by the Minikit wallet address model
- * @see {@link better-auth-minikit#schema | Minikit schema}
- */
-export type MinikitWalletAddress = WalletAddress & MinikitExtraFields;
+export type MinikitAccount = Account &
+	Omit<MinikitExtraFields, "isWorldcoinVerified">;
 
 export interface WalletAddress {
 	id: string;
@@ -111,6 +108,12 @@ export interface WalletAddress {
 	isPrimary: boolean;
 	createdAt: Date;
 }
+
+/**
+ * Minikit Wallet Address Type, returned by the Minikit wallet address model
+ * @see {@link better-auth-minikit#schema | Minikit schema}
+ */
+export type MinikitWalletAddress = WalletAddress & MinikitExtraFields;
 
 interface CacaoHeader {
 	t: "caip122";

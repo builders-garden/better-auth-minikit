@@ -4,17 +4,22 @@ export const schema = {
 	user: {
 		modelName: "user",
 		fields: {
-			minikitAddress: {
+			worldcoinAddress: {
 				type: "string",
 				required: true,
 				unique: true,
+			},
+			isWorldcoinVerified: {
+				type: "boolean",
+				required: true,
+				defaultValue: false,
 			},
 		},
 	},
 	account: {
 		modelName: "account",
 		fields: {
-			minikitAddress: {
+			worldcoinAddress: {
 				type: "string",
 				required: true,
 				unique: true,
