@@ -27,12 +27,12 @@ export declare const minikit: (options: MinikitPluginOptions) => {
             fields: {
                 worldcoinAddress: {
                     type: "string";
-                    required: true;
+                    required: false;
                     unique: true;
                 };
                 isWorldcoinVerified: {
                     type: "boolean";
-                    required: true;
+                    required: false;
                     defaultValue: false;
                 };
             };
@@ -42,7 +42,7 @@ export declare const minikit: (options: MinikitPluginOptions) => {
             fields: {
                 worldcoinAddress: {
                     type: "string";
-                    required: true;
+                    required: false;
                     unique: true;
                 };
             };
