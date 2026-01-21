@@ -80,8 +80,6 @@ export declare const minikit: (options: MinikitPluginOptions) => {
     endpoints: {
         getNonce: import("better-auth").StrictEndpoint<"/minikit/nonce", {
             method: "GET";
-        } & {
-            use: any[];
         }, {
             nonce: string;
         }>;
@@ -100,8 +98,6 @@ export declare const minikit: (options: MinikitPluginOptions) => {
                 }, z.core.$strip>;
             }, z.core.$strip>;
             requireRequest: true;
-        } & {
-            use: any[];
         }, {
             token: string;
             success: boolean;
