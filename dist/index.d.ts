@@ -63,7 +63,7 @@ export declare const minikit: (options: MinikitPluginOptions) => {
                     required: true;
                 };
                 chainId: {
-                    type: "number";
+                    type: "string";
                     required: true;
                 };
                 isPrimary: {

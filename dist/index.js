@@ -117,7 +117,7 @@ export const minikit = (options) => ({
                     model: "walletAddress",
                     where: [
                         { field: "address", operator: "eq", value: walletAddress },
-                        { field: "chainId", operator: "eq", value: chainId },
+                        { field: "chainId", operator: "eq", value: `eip155:${chainId}` },
                     ],
                 });
                 if (existingWalletAddress) {
@@ -173,7 +173,7 @@ export const minikit = (options) => ({
                             data: {
                                 userId: user.id,
                                 address: walletAddress,
-                                chainId,
+                                chainId: `eip155:${chainId}`,
                                 isPrimary: true, // First address is primary
                                 createdAt: new Date(),
                             },
@@ -216,7 +216,7 @@ export const minikit = (options) => ({
                             data: {
                                 userId: user.id,
                                 address: walletAddress,
-                                chainId,
+                                chainId: `eip155:${chainId}`,
                                 isPrimary: false, // Additional addresses are not primary by default
                                 createdAt: new Date(),
                             },
@@ -225,7 +225,7 @@ export const minikit = (options) => ({
                         yield ctx.context.internalAdapter.createAccount({
                             userId: user.id,
                             providerId: "minikit",
-                            accountId: `${walletAddress}:${chainId}`,
+                            accountId: `${walletAddress}:eip155:${chainId}`,
                             createdAt: new Date(),
                             updatedAt: new Date(),
                         });

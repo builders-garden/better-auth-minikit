@@ -89,7 +89,7 @@ export interface WalletAddress {
     id: string;
     userId: string;
     address: string;
-    chainId: number;
+    chainId: string;
     isPrimary: boolean;
     createdAt: Date;
 }
