@@ -21,9 +21,10 @@ export const minikitClient = () => {
              * @returns BetterFetchResponse<string>
              * @throws APIError if the nonce fails
              */
-            getNonce: () => __awaiter(void 0, void 0, void 0, function* () {
+            getNonce: (authData) => __awaiter(void 0, void 0, void 0, function* () {
                 return yield $fetch("/minikit/nonce", {
-                    method: "GET",
+                    method: "POST",
+                    body: authData,
                 });
             }),
             /**
