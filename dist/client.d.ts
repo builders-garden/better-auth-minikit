@@ -15,7 +15,7 @@ export declare const minikitClient: () => {
          * @returns BetterFetchResponse<string>
          * @throws APIError if the nonce fails
          */
-        getNonce: (authData: MinikitGetNonceArgs) => Promise<BetterFetchResponse<MinikitGetNonceResponse>>;
+        getMinikitNonce: (authData: MinikitGetNonceArgs) => Promise<BetterFetchResponse<MinikitGetNonceResponse>>;
         /**
          * Sign in with Worldcoin Minikit
          * @param authData - Authenticated data from the Worldcoin Minikit MiniApp SDK

@@ -41,10 +41,8 @@ export const minikit = (options: MinikitPluginOptions) =>
 				{
 					method: "POST",
 					body: z.object({
-  					walletAddress: z
-  						.string()
-  						.regex(/^0[xX][a-fA-F0-9]{40}$/i)
-  						.length(42),
+  					uuid: z
+  						.string(),
   					chainId: z
   						.number()
   						.int()
@@ -55,13 +53,12 @@ export const minikit = (options: MinikitPluginOptions) =>
 					}),
 				},
 				async (ctx) => {
-  				const { walletAddress: rawWalletAddress, chainId } = ctx.body;
-  				const walletAddress = getAddress(rawWalletAddress);
+  				const { uuid, chainId } = ctx.body;
   				const nonce = await options.getNonce();
 
           // Store nonce with wallet address and chain ID context
 					await ctx.context.internalAdapter.createVerificationValue({
-						identifier: `siwe:${walletAddress}:eip155:${chainId}`,
+						identifier: `minikit:${uuid}:eip155:${chainId}`,
 						value: nonce,
 						expiresAt: new Date(Date.now() + 15 * 60 * 1000), // Expires in 15 minutes
 					});
@@ -77,6 +74,7 @@ export const minikit = (options: MinikitPluginOptions) =>
 						.object({
 							message: z.string().min(1),
 							signature: z.string().min(1),
+							uuid: z.string().min(1),
 							walletAddress: z
 								.string()
 								.regex(/^0[xX][a-fA-F0-9]{40}$/i)
@@ -106,6 +104,7 @@ export const minikit = (options: MinikitPluginOptions) =>
 						message,
 						signature,
 						walletAddress: rawWalletAddress,
+						uuid,
 						chainId,
 						email,
 						user: userFromClient,
@@ -124,7 +123,7 @@ export const minikit = (options: MinikitPluginOptions) =>
 						// Find stored nonce with wallet address and chain ID context
 						const verification =
 							await ctx.context.internalAdapter.findVerificationValue(
-								`siwe:${walletAddress}:eip155:${chainId}`,
+								`minikit:${uuid}:eip155:${chainId}`,
 							);
 
 						// Ensure nonce is valid and not expired

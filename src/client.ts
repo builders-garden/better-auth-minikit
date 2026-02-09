@@ -24,7 +24,7 @@ export const minikitClient = () => {
 			 * @returns BetterFetchResponse<string>
 			 * @throws APIError if the nonce fails
 			 */
-			getNonce: async (authData: MinikitGetNonceArgs): Promise<
+			getMinikitNonce: async (authData: MinikitGetNonceArgs): Promise<
 				BetterFetchResponse<MinikitGetNonceResponse>
 			> => {
 				return await $fetch<MinikitGetNonceResponse>("/minikit/nonce", {
