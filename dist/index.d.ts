@@ -79,7 +79,11 @@ export declare const minikit: (options: MinikitPluginOptions) => {
     };
     endpoints: {
         getNonce: import("better-auth").StrictEndpoint<"/minikit/nonce", {
-            method: "GET";
+            method: "POST";
+            body: z.ZodObject<{
+                walletAddress: z.ZodString;
+                chainId: z.ZodDefault<z.ZodOptional<z.ZodNumber>>;
+            }, z.core.$strip>;
         }, {
             nonce: string;
         }>;
@@ -88,7 +92,6 @@ export declare const minikit: (options: MinikitPluginOptions) => {
             body: z.ZodObject<{
                 message: z.ZodString;
                 signature: z.ZodString;
-                nonce: z.ZodString;
                 walletAddress: z.ZodString;
                 chainId: z.ZodDefault<z.ZodOptional<z.ZodNumber>>;
                 email: z.ZodOptional<z.ZodEmail>;

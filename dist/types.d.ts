@@ -20,6 +20,10 @@ export interface MinikitPluginOptions {
 /**
  * Minikit Get Nonce Arguments
  */
+export interface MinikitGetNonceArgs {
+    walletAddress: string;
+    chainId: number;
+}
 export interface MinikitGetNonceResponse {
     nonce: string;
 }
@@ -64,7 +68,7 @@ export interface ENSLookupResult {
  */
 export type MinikitClientType = {
     minikit: {
-        getNonce: () => Promise<MinikitGetNonceResponse>;
+        getNonce: (args: MinikitGetNonceArgs) => Promise<MinikitGetNonceResponse>;
         signInWithMinikit: (args: MinikitSignInAuthData) => Promise<MinikitSignInResponse>;
     };
 };
